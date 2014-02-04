@@ -1,0 +1,49 @@
+#tl_member_cell_edit_main
+{
+    margin:0 15px 15px 40px;
+}
+#statusBox{
+    margin:15px 0;
+    height: 40px;
+}
+#tl_member_cell_edit .mainTable td
+{
+    padding:12px;
+    border:1px solid #cccccc;
+    width:100px;
+    height: 35px;
+}
+#tl_member_cell_edit .mainTable th{
+    padding:3px;
+}
+
+#tl_member_cell_edit .mainTable td input
+{
+    width:85%;
+    padding:3px;
+}
+
+.activeCell
+{
+    border:1px solid blue !important;
+}
+#mainTable
+{
+border-collapse: separate;
+}
+
+.mainTable .hidden
+{
+    display:none;
+
+}
+
+#mainTable .odd td
+{
+background-color:#ddd;
+}
+
+#mainTable2
+{
+    display:none;
+}
