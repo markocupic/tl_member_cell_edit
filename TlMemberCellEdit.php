@@ -28,7 +28,23 @@ class TlMemberCellEdit extends BackendModule
                      $this->update();
                      exit();
               }
+              if (\Input::get('action') == 'updateGroupmembership')
+              {
+                     $this->updateGroupmembership();
+                     exit();
+              }
 
+
+              $arrMemberGroups = array();
+              $objGroups = \Database::getInstance()->execute("SELECT * FROM tl_member_group");
+              while ($objGroups->next())
+              {
+                     $arrAvailableGroups[$objGroups->id] = array(
+                            'id' => $objGroups->id,
+                            'name' => $objGroups->name
+                     );
+
+              }
 
               $objDb = \Database::getInstance()->execute("SELECT * FROM tl_member WHERE city='Entenhausen' ORDER BY username");
 
@@ -43,10 +59,28 @@ class TlMemberCellEdit extends BackendModule
                      $objTemplate->lastname = $objDb->lastname;
                      $objTemplate->firstname = $objDb->firstname;
                      $objTemplate->lastname = $objDb->lastname;
+
+                     $arrGroups = strlen($objDb->groups != '') ? unserialize($objDb->groups) : array();
+                     $arrGroupMembership = $arrAvailableGroups;
+
+
+                     foreach ($arrGroupMembership as $k => $v)
+                     {
+                            if (in_array($v['id'], $arrGroups))
+                            {
+                                   $arrGroupMembership[$k]['checked'] = ' checked';
+                            }
+                            else
+                            {
+                                   $arrGroupMembership[$k]['checked'] = '';
+                            }
+                     }
+                     $objTemplate->groups = $arrGroupMembership;
                      $html .= $objTemplate->parse();
 
               }
               $this->Template = new BackendTemplate($this->strTemplate);
+              $this->Template->groups = $arrAvailableGroups;
               $this->Template->rows = $html;
        }
 
@@ -160,6 +194,53 @@ class TlMemberCellEdit extends BackendModule
 
               // response
               $json['value'] = $value;
+              echo json_encode($json);
+              exit();
+       }
+
+
+       /**
+        * update data record
+        */
+       private function updateGroupmembership()
+       {
+
+              $json = array();
+
+              $strTable = \Input::post('FORM_SUBMIT');
+              $memberId = \Input::post('memberId');
+              $groupId = \Input::post('groupId');
+              $checked = \Input::post('checked');
+
+              $objMember = $this->Database->prepare('SELECT * FROM tl_member WHERE id=?')->execute($memberId);
+              if ($objMember->numRows)
+              {
+
+                     $arrGroups = $objMember->groups != '' ? unserialize($objMember->groups) : array();
+                     if ($checked == 'true')
+                     {
+
+                            $arrGroups[] = $groupId;
+                            $arrGroups = array_unique($arrGroups);
+                     }
+                     if ($checked == 'false')
+                     {
+                            if (in_array($groupId, $arrGroups))
+                            {
+                                   $index = array_search($groupId, $arrGroups);
+                                   unset($arrGroups[$index]);
+                                   $arrGroups = array_values($arrGroups);
+                            }
+                     }
+
+                     $set = array();
+                     $set['groups'] = serialize($arrGroups);
+                     $query = 'UPDATE ' . $strTable . ' %s WHERE id=?';
+                     $this->Database->prepare($query)->set($set)->execute($memberId);
+              }
+
+              // response
+              $json['status'] = 'success';
               echo json_encode($json);
               exit();
        }

@@ -8,7 +8,7 @@
 }
 #tl_member_cell_edit .mainTable td
 {
-    padding:12px;
+    padding:4px;
     border:1px solid #cccccc;
     width:100px;
     height: 35px;
@@ -22,7 +22,13 @@
     width:85%;
     padding:3px;
 }
+#filterRow th{
+    text-align: center;
+    border:1px solid #fff;
+    padding:4px;
 
+;
+}
 .activeCell
 {
     border:1px solid blue !important;
@@ -30,6 +36,7 @@
 #mainTable
 {
 border-collapse: separate;
+    width:auto;
 }
 
 .mainTable .hidden
@@ -37,7 +44,16 @@ border-collapse: separate;
     display:none;
 
 }
-
+.styled_select
+{
+    display:none;
+}
+select
+{
+    visibility:visible;
+    opacity:1 !important;
+    display:inline-table;
+}
 #mainTable .odd td
 {
 background-color:#ddd;
@@ -46,4 +62,16 @@ background-color:#ddd;
 #mainTable2
 {
     display:none;
+}
+
+#windowFrame
+{
+    overflow:scroll;
+    width:100%;
+    height:400px;
+}
+
+#tableHolder
+{
+    width:5000px;
 }

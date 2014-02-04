@@ -9,7 +9,84 @@ TlMemberCellEdit = new Class({
             });
         });
 
+        $$('.checkable input[type=checkbox').each(function (elChbox) {
+            elChbox.addEvent('change', function (event) {
+                event.stopPropagation();
+                self.updateGroupmembership(elChbox);
+            });
+        });
 
+
+    },
+
+    updateGroupmembership: function (elChbox) {
+        var self = this;
+
+        // get some params from the name attribute of the input element
+        var name = elChbox.get('name');
+        var match = name.match(/^data(?:\[(.+?)\])?\[group_(.+?)\]$/);
+        var memberId = match[1];
+        var groupId = match[2];
+
+        var checked = elChbox.checked ? 'true' : 'false';
+        // create form data object
+        var form = new FormData();
+        form.append('FORM_SUBMIT', self.formSubmit);
+        form.append('REQUEST_TOKEN', self.requestToken);
+        form.append('memberId', memberId);
+        form.append('groupId', groupId);
+        form.append('checked', checked);
+        form.action = 'contao/main.php?do=tl_member_cell_edit&action=updateGroupmembership';
+
+        // create request object
+        var xhr = new XMLHttpRequest();
+
+        // onprogress event
+        xhr.upload.addEventListener('progress', function (event) {
+            if (event.lengthComputable) {
+                var percentComplete = event.loaded / event.total * 100;
+                //
+            } else {
+                //
+            }
+        }, false);
+
+        // onload event
+        xhr.addEventListener('load', function (event) {
+            // get the server-response
+            var json = JSON.decode(xhr.responseText);
+            // if server returns error
+            if (json.status == 'error') {
+                document.id('statusBox').innerHTML = json.errorMsg;
+            }
+
+            // if server returns success
+            if (json.status == 'success') {
+                document.id('statusBox').fade('hide');
+                var fadein = (function () {
+                    document.id('statusBox').innerHTML = 'Daten erfolgreich übernommen!';
+                    document.id('statusBox').fade('in')
+                }.delay(600));
+            }
+
+        }, false);
+
+        // onerror event
+        xhr.addEventListener('error', function (event) {
+            //self.currentRequests--;
+            alert('Upload-error! Please check connectivity.');
+        }, false);
+
+        // onabort event
+        xhr.addEventListener('abort', function (event) {
+            //self.currentRequests--;
+        }, false);
+
+
+        // open and send xhr
+        xhr.open('POST', form.action, true);
+        // send request
+        xhr.send(form);
     },
 
     showInputField: function (elSpan) {
@@ -72,26 +149,26 @@ TlMemberCellEdit = new Class({
         if (elInput.value == elSpan.innerHTML) return;
 
         // get some params from the name attribute of the input element
-        var name = elInput.get("name");
+        var name = elInput.get('name');
         var match = name.match(/^data(?:\[(.+?)\])?\[(.+?)\]$/);
         var id = match[1];
         var field = match[2];
 
         // create form data object
         var form = new FormData();
-        form.append("FORM_SUBMIT", self.formSubmit);
-        form.append("REQUEST_TOKEN", self.requestToken);
-        form.append("field", field);
+        form.append('FORM_SUBMIT', self.formSubmit);
+        form.append('REQUEST_TOKEN', self.requestToken);
+        form.append('field', field);
         form.append(field, elInput.value);
-        form.append("id", id);
-        form.append("value", elInput.value);
+        form.append('id', id);
+        form.append('value', elInput.value);
         form.action = 'contao/main.php?do=tl_member_cell_edit&action=update';
 
         // create request object
         var xhr = new XMLHttpRequest();
 
         // onprogress event
-        xhr.upload.addEventListener("progress", function (event) {
+        xhr.upload.addEventListener('progress', function (event) {
             if (event.lengthComputable) {
                 var percentComplete = event.loaded / event.total * 100;
                 //
@@ -101,7 +178,7 @@ TlMemberCellEdit = new Class({
         }, false);
 
         // onload event
-        xhr.addEventListener("load", function (event) {
+        xhr.addEventListener('load', function (event) {
             // get the server-response
             var json = JSON.decode(xhr.responseText);
             // if server returns error
@@ -114,7 +191,7 @@ TlMemberCellEdit = new Class({
                 elSpan.innerHTML = json.value;
                 document.id('statusBox').fade('hide');
                 var fadein = (function () {
-                    document.id('statusBox').innerHTML = "Daten erfolgreich übernommen!";
+                    document.id('statusBox').innerHTML = 'Daten erfolgreich übernommen!';
                     document.id('statusBox').fade('in')
                 }.delay(600));
             }
@@ -122,19 +199,19 @@ TlMemberCellEdit = new Class({
         }, false);
 
         // onerror event
-        xhr.addEventListener("error", function (event) {
+        xhr.addEventListener('error', function (event) {
             //self.currentRequests--;
             alert('Upload-error! Please check connectivity.');
         }, false);
 
         // onabort event
-        xhr.addEventListener("abort", function (event) {
+        xhr.addEventListener('abort', function (event) {
             //self.currentRequests--;
         }, false);
 
 
         // open and send xhr
-        xhr.open("POST", form.action, true);
+        xhr.open('POST', form.action, true);
         // send request
         xhr.send(form);
 

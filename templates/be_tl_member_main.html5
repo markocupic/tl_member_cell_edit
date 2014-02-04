@@ -13,41 +13,76 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
             for="chboxCol_1">Firstname</label>
         <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:toggleCols(this)" checked><label
             for="chboxCol_2">Lastname</label>
+        <!-- groups -->
+        <br>
+        <?php $i=3; ?>
+        <?php foreach($this->groups as $group): ?>
+        <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>"
+               onchange="javascript:toggleCols(this)" checked><label
+            for="chboxCol_<?php echo $i; ?>"><?php echo $group['name']; ?></label>
+        <?php $i++; ?>
+        <?php endforeach; ?>
 
         <div id="statusBox"></div>
-        <table id="mainTable" class="mainTable">
-            <!-- head section -->
+        <div id="windowFrame">
+            <div id="tableHolder">
+                <table id="mainTable" class="mainTable">
+                    <!-- head section -->
 
-            <thead>
-            <tr id="headlineRow">
-                <th id="th_0" class="col_0">Username</th>
-                <th id="th_1" class="col_1">Firstname</th>
-                <th id="th_2" class="col_2">Lastname</th>
-                <th class="unsortable"></th>
-            </tr>
+                    <thead>
+                    <tr id="headlineRow">
+                        <th id="th_0" class="col_0">Username</th>
+                        <th id="th_1" class="col_1">Firstname</th>
+                        <th id="th_2" class="col_2">Lastname</th>
+                        <?php $i=3; ?>
+                        <?php foreach($this->groups as $group): ?>
+                        <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $group['name']; ?></th>
+                        <?php $i++; ?>
+                        <?php endforeach; ?>
+                        <th class="unsortable"></th>
+                    </tr>
 
-            <tr id="filterRow">
-                <th class="filterCell col_0"><input id="filter_username" data-config="0" class="filterInput" type="text"
-                                                    value=""></th>
-                <th class="filterCell col_1"><input id="filter_firstname" data-config="1" class="filterInput"
-                                                    type="text"
-                                                    value=""></th>
-                <th class="filterCell col_2"><input id="filter_lastname" data-config="2" class="filterInput" type="text"
-                                                    value=""></th>
-                <th class="filterCell unsortable"><input type="submit" value="filter" onclick="javascript:filter();">
-                </th>
-            </tr>
-            </thead>
+                    <tr id="filterRow">
+                        <th class="filterCell col_0"><input id="filter_username" data-config="0" class="filterInput"
+                                                            type="text"
+                                                            value=""></th>
+                        <th class="filterCell col_1"><input id="filter_firstname" data-config="1" class="filterInput"
+                                                            type="text"
+                                                            value=""></th>
+                        <th class="filterCell col_2"><input id="filter_lastname" data-config="2" class="filterInput"
+                                                            type="text"
+                                                            value=""></th>
+                        <?php $i=3; ?>
+                        <?php foreach($this->groups as $group): ?>
+                        <th class="filterCell col_<?php echo $i; ?>">
+                            <select id="filter_group_<?php echo $group['id']; ?>" size="1"
+                                    data-config="<?php echo $i; ?>"
+                                    class="filterInput" type="select">
+                                <option value="0">-----</option>
+                                <option value="true">true</option>
+                                <option value="false">false</option>
+                            </select>
+                        </th>
+                        <?php $i++; ?>
+                        <?php endforeach; ?>
 
-            <!-- body section -->
-            <tbody>
-            <?php echo $this->rows; ?>
-            </tbody>
-        </table>
+                        <th class="filterCell unsortable"><input type="submit" value="filter"
+                                                                 onclick="javascript:filter();">
+                        </th>
+                    </tr>
+                    </thead>
 
-        <table id="mainTable2" class="mainTable2">
+                    <!-- body section -->
+                    <tbody>
+                    <?php echo $this->rows; ?>
+                    </tbody>
+                </table>
 
-        </table>
+                <table id="mainTable2" class="mainTable2">
+
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -62,16 +97,20 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
         objSortableTable = new MyTableSort(mainTable, '.', ',');
         resortTable();
 
-        for (i = 0; i < 3; i++) {
-            var elChBox = document.id('chboxCol_' + i);
+        for (i = 0; i < 100; i++) {
+            if (document.id('chboxCol_' + i)) {
+                var elChBox = document.id('chboxCol_' + i);
 
-            if (getCookieValue('col_' + i) == 'visible') {
-                elChBox.checked = true;
-            } else {
-                elChBox.checked = false;
+                if (getCookieValue('col_' + i) == 'visible') {
+                    elChBox.checked = true;
+                } else {
+                    elChBox.checked = false;
+                }
+                toggleCols(elChBox);
             }
-            toggleCols(elChBox);
         }
+
+
     });
 
 
@@ -93,7 +132,7 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
     }
 
     /**
-     * Send cookie to the browser
+     * Send cookie to browser
      * @param key
      * @param value
      */
@@ -116,20 +155,46 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
 
         restoreTable();
         $$('#' + filterRow.id + ' .filterInput').each(function (elInput) {
-            alert(elInput);
-            var search = elInput.value.toLowerCase();
-            if (search != '') {
+            if (elInput.type == 'text') {
+                var search = elInput.value.toLowerCase();
+                if (search != '') {
+                    var col = elInput.getProperty('data-config');
+                    $$('td.col_' + col + ' span').each(function (elSpan) {
+
+                        var content = elSpan.innerHTML.toLowerCase();
+                        if (!content.test(search)) {
+                            elRow = elSpan.getParent('tr');
+                            elRow.addClass('hiddenRow');
+                        }
+
+                    });
+                }
+            }
+
+
+            if (elInput.tagName == 'SELECT') {
+
+
+                var value = elInput.options[elInput.selectedIndex].value;
+
                 var col = elInput.getProperty('data-config');
-                $$('td.col_' + col + ' span').each(function (elSpan) {
-
-                    var content = elSpan.innerHTML.toLowerCase();
-                    if (!content.test(search)) {
-                        elRow = elSpan.getParent('tr');
-                        elRow.addClass('hiddenRow');
+                $$('td.col_' + col + ' input[type=checkbox]').each(function (elChbx) {
+                    if (value == 'true') {
+                        if (elChbx.checked == false) {
+                            elRow = elChbx.getParent('tr');
+                            elRow.addClass('hiddenRow');
+                        }
                     }
-
+                    if (value == 'false') {
+                        if (elChbx.checked == true) {
+                            elRow = elChbx.getParent('tr');
+                            elRow.addClass('hiddenRow');
+                        }
+                    }
                 });
             }
+
+
         });
 
 
