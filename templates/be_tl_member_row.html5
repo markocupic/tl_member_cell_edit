@@ -16,6 +16,7 @@
 <?php foreach ($this->groups as $arrGroup): ?>
 
     <td class="checkable col_<?php echo $i; ?>">
+        <span style="display:none"><?php echo trim($arrGroup['checked']); ?></span>
         <input type="checkbox" name="data[<?php echo $this->id; ?>][group_<?php echo $arrGroup['id']; ?>]"<?php echo $arrGroup['checked']; ?>>
     </td>
 <?php $i++; ?>
@@ -25,5 +26,10 @@
        <td class="button delete">
               <img src="system/themes/default/images/delete.gif" width="14" height="16" alt="Mitglied löschen" onclick="objXHR.delete(this, '<?php echo $this->id; ?>')">
        </td>
+    <td class="button edit">
+        <a href="contao/main.php?do=member&act=edit&id=<?php echo $this->id; ?>&rt=<?php echo REQUEST_TOKEN; ?>" target="_blank">
+            <img src="system/themes/default/images/edit.gif" width="14" height="16" alt="Mitglied bearbeiten">
+        </a>
+    </td>
 
 </tr>

@@ -222,6 +222,7 @@ class TlMemberCellEdit extends BackendModule
 
                             $arrGroups[] = $groupId;
                             $arrGroups = array_unique($arrGroups);
+                            $json['value'] = 'checked';
                      }
                      if ($checked == 'false')
                      {
@@ -231,6 +232,8 @@ class TlMemberCellEdit extends BackendModule
                                    unset($arrGroups[$index]);
                                    $arrGroups = array_values($arrGroups);
                             }
+                            $json['value'] = '';
+
                      }
 
                      $set = array();

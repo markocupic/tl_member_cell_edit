@@ -22,6 +22,9 @@ TlMemberCellEdit = new Class({
     updateGroupmembership: function (elChbox) {
         var self = this;
 
+        // get the span element
+        var elSpan = elChbox.getSiblings('span')[0];
+
         // get some params from the name attribute of the input element
         var name = elChbox.get('name');
         var match = name.match(/^data(?:\[(.+?)\])?\[group_(.+?)\]$/);
@@ -29,6 +32,13 @@ TlMemberCellEdit = new Class({
         var groupId = match[2];
 
         var checked = elChbox.checked ? 'true' : 'false';
+        // remove property checked
+        if (elChbox.checked) {
+            elChbox.checked = true;
+            elChbox.checked = 'checked'; 
+        } else {
+            elChbox.checked = false;
+        }
         // create form data object
         var form = new FormData();
         form.append('FORM_SUBMIT', self.formSubmit);
@@ -53,21 +63,31 @@ TlMemberCellEdit = new Class({
 
         // onload event
         xhr.addEventListener('load', function (event) {
+            // hide message Text
+            document.id('statusBox').fade('hide');
+            var serverResponse = '';
             // get the server-response
             var json = JSON.decode(xhr.responseText);
             // if server returns error
             if (json.status == 'error') {
-                document.id('statusBox').innerHTML = json.errorMsg;
+                serverResponse = json.errorMsg;
             }
 
             // if server returns success
             if (json.status == 'success') {
-                document.id('statusBox').fade('hide');
-                var fadein = (function () {
-                    document.id('statusBox').innerHTML = 'Daten erfolgreich übernommen!';
-                    document.id('statusBox').fade('in')
-                }.delay(600));
+                elSpan.innerHTML = json.value;
+                serverResponse = 'Daten erfolgreich übernommen!';
             }
+
+            var fadein = (function () {
+                document.id('statusBox').innerHTML = serverResponse;
+                document.id('statusBox').fade('in');
+            }.delay(200));
+
+            var fadeOut = (function () {
+                document.id('statusBox').innerHTML = '';
+                document.id('statusBox').fade('out')
+            }.delay(4000));
 
         }, false);
 
@@ -179,22 +199,31 @@ TlMemberCellEdit = new Class({
 
         // onload event
         xhr.addEventListener('load', function (event) {
+            // hide message Text
+            document.id('statusBox').fade('hide');
+            var serverResponse = '';
             // get the server-response
             var json = JSON.decode(xhr.responseText);
             // if server returns error
             if (json.status == 'error') {
-                document.id('statusBox').innerHTML = json.errorMsg;
+                serverResponse = json.errorMsg;
             }
 
             // if server returns success
             if (json.status == 'success') {
                 elSpan.innerHTML = json.value;
-                document.id('statusBox').fade('hide');
-                var fadein = (function () {
-                    document.id('statusBox').innerHTML = 'Daten erfolgreich übernommen!';
-                    document.id('statusBox').fade('in')
-                }.delay(600));
+                serverResponse = 'Daten erfolgreich übernommen!';
             }
+
+            var fadein = (function () {
+                document.id('statusBox').innerHTML = serverResponse;
+                document.id('statusBox').fade('in');
+            }.delay(200));
+
+            var fadeOut = (function () {
+                document.id('statusBox').innerHTML = '';
+                document.id('statusBox').fade('out')
+            }.delay(4000));
 
         }, false);
 

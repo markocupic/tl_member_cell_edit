@@ -7,28 +7,29 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
     <div id="tl_member_cell_edit_main">
         <h2>Mitgliederverwaltung</h2>
 
-        <input id="chboxCol_0" type="checkbox" value="col_0" onchange="javascript:toggleCols(this)" checked><label
-            for="chboxCol_0">Username</label>
-        <input id="chboxCol_1" type="checkbox" value="col_1" onchange="javascript:toggleCols(this)" checked><label
-            for="chboxCol_1">Firstname</label>
-        <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:toggleCols(this)" checked><label
-            for="chboxCol_2">Lastname</label>
+        <input id="chboxCol_0" type="checkbox" value="col_0" onchange="javascript:toggleCols(this)" checked>
+        <label for="chboxCol_0">Username</label>
+        <input id="chboxCol_1" type="checkbox" value="col_1" onchange="javascript:toggleCols(this)" checked>
+        <label for="chboxCol_1">Firstname</label>
+        <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:toggleCols(this)" checked>
+        <label for="chboxCol_2">Lastname</label>
         <!-- groups -->
         <br>
         <?php $i=3; ?>
         <?php foreach($this->groups as $group): ?>
-        <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>"
-               onchange="javascript:toggleCols(this)" checked><label
-            for="chboxCol_<?php echo $i; ?>"><?php echo $group['name']; ?></label>
+        <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:toggleCols(this)" checked>
+        <label for="chboxCol_<?php echo $i; ?>"><?php echo $group['name']; ?></label>
         <?php $i++; ?>
         <?php endforeach; ?>
 
+        <!-- Server messages -->
         <div id="statusBox"></div>
+
         <div id="windowFrame">
             <div id="tableHolder">
                 <table id="mainTable" class="mainTable">
-                    <!-- head section -->
 
+                    <!-- head section -->
                     <thead>
                     <tr id="headlineRow">
                         <th id="th_0" class="col_0">Username</th>
@@ -40,24 +41,21 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
                         <?php $i++; ?>
                         <?php endforeach; ?>
                         <th class="unsortable"></th>
+                        <th class="unsortable"></th>
+
                     </tr>
 
                     <tr id="filterRow">
-                        <th class="filterCell col_0"><input id="filter_username" data-config="0" class="filterInput"
-                                                            type="text"
-                                                            value=""></th>
-                        <th class="filterCell col_1"><input id="filter_firstname" data-config="1" class="filterInput"
-                                                            type="text"
-                                                            value=""></th>
-                        <th class="filterCell col_2"><input id="filter_lastname" data-config="2" class="filterInput"
-                                                            type="text"
-                                                            value=""></th>
+                        <th class="filterCell col_0">
+                            <input id="filter_username" data-config="0" class="filterInput" value=""></th>
+                        <th class="filterCell col_1">
+                            <input id="filter_firstname" data-config="1" class="filterInput" type="text" value=""></th>
+                        <th class="filterCell col_2">
+                            <input id="filter_lastname" data-config="2" class="filterInput" type="text" value=""></th>
                         <?php $i=3; ?>
                         <?php foreach($this->groups as $group): ?>
                         <th class="filterCell col_<?php echo $i; ?>">
-                            <select id="filter_group_<?php echo $group['id']; ?>" size="1"
-                                    data-config="<?php echo $i; ?>"
-                                    class="filterInput" type="select">
+                            <select id="filter_group_<?php echo $group['id']; ?>" size="1" data-config="<?php echo $i; ?>" class="filterInput" type="select">
                                 <option value="0">-----</option>
                                 <option value="true">true</option>
                                 <option value="false">false</option>
@@ -66,8 +64,10 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
                         <?php $i++; ?>
                         <?php endforeach; ?>
 
-                        <th class="filterCell unsortable"><input type="submit" value="filter"
-                                                                 onclick="javascript:filter();">
+                        <th class="filterCell unsortable">
+                            <input type="submit" value="filter" onclick="javascript:filter();">
+                        </th>
+                        <th class="editCell unsortable">
                         </th>
                     </tr>
                     </thead>
@@ -78,7 +78,7 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
                     </tbody>
                 </table>
 
-                <table id="mainTable2" class="mainTable2">
+                <table id="tempTable">
 
                 </table>
             </div>
@@ -89,6 +89,8 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
 
     window.addEvent('domready', function () {
         mainTable = document.id('mainTable');
+        tempTable = document.id('tempTable');
+
         filterRow = document.id('filterRow');
         objXHR = new TlMemberCellEdit();
         objXHR.requestToken = '<?php echo REQUEST_TOKEN; ?>';
@@ -199,9 +201,8 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
 
 
         $$('tr.hiddenRow').each(function (elRow) {
-            var garbageTable = document.id('mainTable2');
             elRow.removeClass('hiddenRow');
-            garbageTable.adopt(elRow);
+            tempTable.adopt(elRow);
         });
 
         resortTable();
@@ -210,7 +211,7 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
 
     function restoreTable() {
         var mainTableBody = $$('#mainTable tbody')[0];
-        $$('#mainTable2 tr').each(function (elRow) {
+        tempTable.getChildren('tr').each(function (elRow) {
             mainTableBody.adopt(elRow);
         });
     }

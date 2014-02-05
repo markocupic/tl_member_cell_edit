@@ -1,77 +1,95 @@
-#tl_member_cell_edit_main
-{
-    margin:0 15px 15px 40px;
+/**
+ * stretch the backend layout
+ */
+#header, #container {
+    width: 1208px !important;
 }
-#statusBox{
-    margin:15px 0;
-    height: 40px;
+#main {
+    width: 985px !important;
 }
-#tl_member_cell_edit .mainTable td
-{
-    padding:4px;
-    border:1px solid #cccccc;
-    width:100px;
+
+
+
+
+
+#tl_member_cell_edit_main {
+    margin: 0 15px 15px 40px;
+}
+
+#statusBox {
+    margin: 15px 0 0 0;
+    height: 20px;
+    color: rgb(119, 172, 69);
+}
+
+#windowFrame {
+    overflow: scroll;
+    width: 100%;
+    height: 400px;
+}
+
+#tableHolder {
+    width: 5000px;
+}
+
+#mainTable {
+    border-collapse: separate;
+    border-spacing: 1px;
+    border-color: gray;
+    width: auto;
+}
+
+#mainTable .activeCell {
+    border: 1px solid blue;
+}
+
+#mainTable .odd td {
+    background-color: #eee;
+}
+
+#tempTable {
+    display: none;
+}
+
+#mainTable .hidden {
+    display: none;
+}
+
+#mainTable td {
+    padding: 4px;
+    border: 1px solid #fff;
+    width: 100px;
     height: 35px;
 }
-#tl_member_cell_edit .mainTable th{
-    padding:3px;
-}
-
-#tl_member_cell_edit .mainTable td input
-{
-    width:85%;
-    padding:3px;
-}
-#filterRow th{
+#mainTable td.delete, #mainTable td.edit {
     text-align: center;
-    border:1px solid #fff;
-    padding:4px;
-
-;
-}
-.activeCell
-{
-    border:1px solid blue !important;
-}
-#mainTable
-{
-border-collapse: separate;
-    width:auto;
+    width: 50px;
 }
 
-.mainTable .hidden
-{
-    display:none;
-
-}
-.styled_select
-{
-    display:none;
-}
-select
-{
-    visibility:visible;
-    opacity:1 !important;
-    display:inline-table;
-}
-#mainTable .odd td
-{
-background-color:#ddd;
+#mainTable th {
+    padding: 3px;
 }
 
-#mainTable2
-{
-    display:none;
+#mainTable td input {
+    width: 85%;
+    padding: 3px;
+}
+#filterRow th {
+    text-align: center;
+    border: 1px solid #fff;
+    padding: 4px;
+    background-color: #eee;
 }
 
-#windowFrame
-{
-    overflow:scroll;
-    width:100%;
-    height:400px;
+#filterRow select {
+    visibility: visible;
+    opacity: 1 !important;
+    display: inline-table;
 }
 
-#tableHolder
-{
-    width:5000px;
+#filterRow .styled_select {
+    display: none;
 }
+
+
+
