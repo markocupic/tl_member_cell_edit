@@ -45,9 +45,9 @@ var MyTableSort = new Class(
          * @param {object} table              The DOM element
          * @param {string} thousandsSeparator The thousands separator
          * @param {string} decimalSeparator   The decimal separator
-         * @param {string} decimalSeparator   The decimal separator
-
+         * @param {string} intFilterRow       The filter Row
          */
+        //initialize: function (table, thousandsSeparator, decimalSeparator) {
         initialize: function (table, thousandsSeparator, decimalSeparator, intFilterRow) {
             if (thousandsSeparator) {
                 THOUSANDS_SEPARATOR = thousandsSeparator;
@@ -96,9 +96,8 @@ var MyTableSort = new Class(
                 }
             }
 
-            /** Cupic **/
-
-                // inject temp table for filtering
+            // Cupic
+            // inject temp table for filtering
             this.tempTable = new Element('table', {
                 id: 'tempTable',
                 styles: {
@@ -119,6 +118,7 @@ var MyTableSort = new Class(
         },
 
         /**
+         * filter
          * @author Cupic
          */
         filter: function () {
@@ -162,10 +162,7 @@ var MyTableSort = new Class(
                         }
                     });
                 }
-
-
             });
-
 
             $$('tr.hiddenRow').each(function (elRow) {
                 elRow.removeClass('hiddenRow');
@@ -173,53 +170,57 @@ var MyTableSort = new Class(
             });
 
             this.resortTable();
-
         },
 
 
         /**
-         * get cookie from browser
+         * getCookieValue
+         * @author Cupic
          * @param key
          * @return string
          */
         getCookieValue: function (key) {
             if (key == '') return;
-            cookieStr = Cookie.read('cellEdit');
-            if (cookieStr === null) return null;
-            objCookie = JSON.decode(cookieStr);
-            if (objCookie[key]) {
-                return objCookie[key];
+            var cookieStr = Cookie.read('cellEdit');
+            if (cookieStr === null) {
+                return;
             } else {
-                return null;
+                objCookie = JSON.decode(cookieStr);
+                if (objCookie[key]) {
+                    return objCookie[key];
+                } else {
+                    return;
+                }
             }
         },
 
         /**
-         * Send cookie to browser
+         * setCookieValue
+         * @author Cupic
          * @param key
          * @param value
          */
         setCookieValue: function (key, value) {
             if (key == '') return;
-            cookieStr = Cookie.read('cellEdit');
+            var cookieStr = Cookie.read('cellEdit');
+            var objCookie = {};
             if (cookieStr) {
-                var objCookie = JSON.decode(cookieStr);
-            } else {
-                var objCookie = {};
+                objCookie = JSON.decode(cookieStr);
             }
             objCookie[key] = value;
-
             cookieStr = JSON.encode(objCookie);
             Cookie.write('cellEdit', cookieStr, {duration: 30});
         },
 
+
         /**
+         * toggleCols
          * @author Cupic
-         * @param elChBox
+         * @param elCheckbox
          */
-        toggleCols: function (elChBox) {
-            var col = elChBox.value;
-            if (elChBox.checked) {
+        toggleCols: function (elCheckbox) {
+            var col = elCheckbox.value;
+            if (elCheckbox.checked) {
                 $$('.' + col).each(function (elCell) {
                     elCell.setStyle('display', 'table-cell');
                 });
@@ -234,20 +235,20 @@ var MyTableSort = new Class(
 
 
         /**
+         * restoreTable
          * @author: Cupic
          */
         restoreTable: function () {
-            var mainTableBody = $$('#mainTable tbody')[0];
-            tempTable.getChildren('tr').each(function (elRow) {
-                mainTableBody.adopt(elRow);
-            });
+            while (this.tempTable.rows.length > 0) {
+                this.table.tBodies[0].adopt(this.tempTable.rows[0]);
+            }
         },
 
         /**
+         * resortTable
          * @author: Cupic
          */
         resortTable: function () {
-
             if ($$('th.asc')[0]) {
                 var sortCell = $$('th.asc')[0];
                 sortCell.removeClass('asc');
@@ -261,17 +262,16 @@ var MyTableSort = new Class(
             else {
                 //
             }
-
+            var col;
             if (sortCell) {
                 col = sortCell.id.replace("th_", "");
             } else {
                 // if no cookie was set, add default settings
                 var sortCell = document.id('th_0');
-                var col = '0';
+                col = '0';
             }
 
             this.resort(col, sortCell);
-
         },
 
         /**

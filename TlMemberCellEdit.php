@@ -23,6 +23,9 @@ class TlMemberCellEdit extends BackendModule
        public function compile()
        {
 
+              // load language file
+              \System::loadLanguageFile('tl_member');
+
               if (\Input::get('action') == 'update')
               {
                      $this->update();

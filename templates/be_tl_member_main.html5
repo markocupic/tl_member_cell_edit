@@ -4,11 +4,11 @@
         <h2>Mitgliederverwaltung</h2>
 
         <input id="chboxCol_0" type="checkbox" value="col_0" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-        <label for="chboxCol_0">Username</label>
+        <label for="chboxCol_0"><?php echo $GLOBALS['TL_LANG']['tl_member']['username'][0]; ?></label>
         <input id="chboxCol_1" type="checkbox" value="col_1" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-        <label for="chboxCol_1">Firstname</label>
+        <label for="chboxCol_1"><?php echo $GLOBALS['TL_LANG']['tl_member']['firstname'][0]; ?></label>
         <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-        <label for="chboxCol_2">Lastname</label>
+        <label for="chboxCol_2"><?php echo $GLOBALS['TL_LANG']['tl_member']['lastname'][0]; ?></label>
         <!-- groups -->
         <br>
         <?php $i=3; ?>
@@ -28,9 +28,9 @@
                     <!-- head section -->
                     <thead>
                     <tr id="headlineRow">
-                        <th id="th_0" class="col_0">Username</th>
-                        <th id="th_1" class="col_1">Firstname</th>
-                        <th id="th_2" class="col_2">Lastname</th>
+                        <th id="th_0" class="col_0"><?php echo $GLOBALS['TL_LANG']['tl_member']['username'][0]; ?></th>
+                        <th id="th_1" class="col_1"><?php echo $GLOBALS['TL_LANG']['tl_member']['firstname'][0]; ?></th>
+                        <th id="th_2" class="col_2"><?php echo $GLOBALS['TL_LANG']['tl_member']['lastname'][0]; ?></th>
                         <?php $i=3; ?>
                         <?php foreach($this->groups as $group): ?>
                         <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $group['name']; ?></th>
