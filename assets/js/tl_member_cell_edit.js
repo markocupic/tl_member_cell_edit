@@ -27,15 +27,16 @@ TlMemberCellEdit = new Class({
 
         // get some params from the name attribute of the input element
         var name = elChbox.get('name');
-        var match = name.match(/^data(?:\[(.+?)\])?\[group_(.+?)\]$/);
+        var match = name.match(/^data(?:\[(.+?)\])?\[(.+?)_(.+?)\]$/);
         var memberId = match[1];
-        var groupId = match[2];
+        var field = match[2];
+        var groupId = match[3];
 
         var checked = elChbox.checked ? 'true' : 'false';
         // remove property checked
         if (elChbox.checked) {
             elChbox.checked = true;
-            elChbox.checked = 'checked'; 
+            elChbox.checked = 'checked';
         } else {
             elChbox.checked = false;
         }
@@ -43,6 +44,7 @@ TlMemberCellEdit = new Class({
         var form = new FormData();
         form.append('FORM_SUBMIT', self.formSubmit);
         form.append('REQUEST_TOKEN', self.requestToken);
+        form.append('field', field);
         form.append('memberId', memberId);
         form.append('groupId', groupId);
         form.append('checked', checked);

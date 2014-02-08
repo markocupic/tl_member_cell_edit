@@ -17,11 +17,22 @@
 #tl_member_cell_edit_main {
     margin: 0 15px 15px 40px;
 }
-
+#toggleSelectContainer
+{
+    margin-top:20px;
+}
+#toggleSelectContainer h3
+{
+    margin-top:0;
+    font-size:11px;
+    font-weight: bold;
+}
 #statusBox {
-    margin: 15px 0 0 0;
-    height: 20px;
+    margin: 20px 0 0 0;
+    padding-top:10px;
+    height: 30px;
     color: rgb(119, 172, 69);
+    clear:both;
 }
 
 #windowFrame {

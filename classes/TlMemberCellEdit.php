@@ -38,7 +38,7 @@ class TlMemberCellEdit extends BackendModule
               }
 
 
-              $arrMemberGroups = array();
+              $arrAvailableGroups = array();
               $objGroups = \Database::getInstance()->execute("SELECT * FROM tl_member_group");
               while ($objGroups->next())
               {
@@ -46,7 +46,16 @@ class TlMemberCellEdit extends BackendModule
                             'id' => $objGroups->id,
                             'name' => $objGroups->name
                      );
+              }
 
+              $arrAvailableCustomers = array();
+              $objCustomers = \Database::getInstance()->execute("SELECT * FROM tl_customer_group");
+              while ($objCustomers->next())
+              {
+                     $arrAvailableCustomers[$objCustomers->id] = array(
+                            'id' => $objCustomers->id,
+                            'name' => $objCustomers->name
+                     );
               }
 
               $objDb = \Database::getInstance()->execute("SELECT * FROM tl_member WHERE city='Entenhausen' ORDER BY username");
@@ -63,10 +72,9 @@ class TlMemberCellEdit extends BackendModule
                      $objTemplate->firstname = $objDb->firstname;
                      $objTemplate->lastname = $objDb->lastname;
 
+                     //member_groups
                      $arrGroups = strlen($objDb->groups != '') ? unserialize($objDb->groups) : array();
                      $arrGroupMembership = $arrAvailableGroups;
-
-
                      foreach ($arrGroupMembership as $k => $v)
                      {
                             if (in_array($v['id'], $arrGroups))
@@ -79,11 +87,30 @@ class TlMemberCellEdit extends BackendModule
                             }
                      }
                      $objTemplate->groups = $arrGroupMembership;
+
+                     //customer_groups
+                     $arrCustomers = strlen($objDb->customers != '') ? unserialize($objDb->customers) : array();
+                     $arrCustomerMembership = $arrAvailableCustomers;
+                     foreach ($arrCustomerMembership as $k => $v)
+                     {
+                            if (in_array($v['id'], $arrCustomers))
+                            {
+                                   $arrCustomerMembership[$k]['checked'] = ' checked';
+                            }
+                            else
+                            {
+                                   $arrCustomerMembership[$k]['checked'] = '';
+                            }
+                     }
+                     $objTemplate->customers = $arrCustomerMembership;
                      $html .= $objTemplate->parse();
 
               }
+
+
               $this->Template = new BackendTemplate($this->strTemplate);
               $this->Template->groups = $arrAvailableGroups;
+              $this->Template->customers = $arrAvailableCustomers;
               $this->Template->rows = $html;
        }
 
@@ -214,12 +241,14 @@ class TlMemberCellEdit extends BackendModule
               $memberId = \Input::post('memberId');
               $groupId = \Input::post('groupId');
               $checked = \Input::post('checked');
+              $field = \Input::post('field');
 
-              $objMember = $this->Database->prepare('SELECT * FROM tl_member WHERE id=?')->execute($memberId);
+
+              $objMember = $this->Database->prepare('SELECT * FROM ' . $strTable . ' WHERE id=?')->execute($memberId);
               if ($objMember->numRows)
               {
 
-                     $arrGroups = $objMember->groups != '' ? unserialize($objMember->groups) : array();
+                     $arrGroups = $objMember->$field != '' ? unserialize($objMember->$field) : array();
                      if ($checked == 'true')
                      {
 
@@ -240,7 +269,7 @@ class TlMemberCellEdit extends BackendModule
                      }
 
                      $set = array();
-                     $set['groups'] = serialize($arrGroups);
+                     $set[$field] = serialize($arrGroups);
                      $query = 'UPDATE ' . $strTable . ' %s WHERE id=?';
                      $this->Database->prepare($query)->set($set)->execute($memberId);
               }

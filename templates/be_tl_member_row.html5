@@ -1,31 +1,38 @@
 <tr>
-       <td class="editable col_0">
-              <span style="display:inline"><?php echo $this->username; ?></span>
-              <input type="text" name="data[<?php echo  $this->id; ?>][username]" value="<?php echo $this->username; ?>" style="display:none">
-       </td>
-       <td class="editable col_1">
-              <span style="display:inline"><?php echo $this->firstname; ?></span>
-              <input type="text" name="data[<?php echo  $this->id; ?>][firstname]" value="<?php echo $this->firstname; ?>" style="display:none">
-       </td>
-       <td class="editable col_2">
-              <span style="display:inline"><?php echo $this->lastname; ?></span>
-              <input type="text" name="data[<?php echo  $this->id; ?>][lastname]" value="<?php echo $this->lastname; ?>" style="display:none">
-       </td>
+    <td class="editable col_0">
+        <span style="display:inline"><?php echo $this->username; ?></span>
+        <input type="text" name="data[<?php echo  $this->id; ?>][username]" value="<?php echo $this->username; ?>" style="display:none">
+    </td>
+    <td class="editable col_1">
+        <span style="display:inline"><?php echo $this->firstname; ?></span>
+        <input type="text" name="data[<?php echo  $this->id; ?>][firstname]" value="<?php echo $this->firstname; ?>" style="display:none">
+    </td>
+    <td class="editable col_2">
+        <span style="display:inline"><?php echo $this->lastname; ?></span>
+        <input type="text" name="data[<?php echo  $this->id; ?>][lastname]" value="<?php echo $this->lastname; ?>" style="display:none">
+    </td>
 
-<?php $i = 3; ?>
-<?php foreach ($this->groups as $arrGroup): ?>
-
+    <?php $i = 3; ?>
+    <?php foreach ($this->groups as $arrGroup): ?>
     <td class="checkable col_<?php echo $i; ?>">
         <span style="display:none"><?php echo trim($arrGroup['checked']); ?></span>
-        <input type="checkbox" name="data[<?php echo $this->id; ?>][group_<?php echo $arrGroup['id']; ?>]"<?php echo $arrGroup['checked']; ?>>
+        <input type="checkbox" name="data[<?php echo $this->id; ?>][groups_<?php echo $arrGroup['id']; ?>]"<?php echo $arrGroup['checked']; ?>>
     </td>
-<?php $i++; ?>
-<?php endforeach; ?>
+    <?php $i++; ?>
+    <?php endforeach; ?>
+
+    <?php foreach ($this->customers as $arrCustomer): ?>
+    <td class="checkable col_<?php echo $i; ?>">
+        <span style="display:none"><?php echo trim($arrCustomer['checked']); ?></span>
+        <input type="checkbox" name="data[<?php echo $this->id; ?>][customers_<?php echo $arrCustomer['id']; ?>]"<?php echo $arrCustomer['checked']; ?>>
+    </td>
+    <?php $i++; ?>
+    <?php endforeach; ?>
 
 
-       <td class="button delete">
-              <img src="system/themes/default/images/delete.gif" width="14" height="16" alt="Mitglied löschen" onclick="objXHR.delete(this, '<?php echo $this->id; ?>')">
-       </td>
+    <td class="button delete">
+        <img src="system/themes/default/images/delete.gif" width="14" height="16" alt="Mitglied löschen" onclick="objXHR.delete(this, '<?php echo $this->id; ?>')">
+    </td>
     <td class="button edit">
         <a href="contao/main.php?do=member&act=edit&id=<?php echo $this->id; ?>&rt=<?php echo REQUEST_TOKEN; ?>" target="_blank">
             <img src="system/themes/default/images/edit.gif" width="14" height="16" alt="Mitglied bearbeiten">
