@@ -1,23 +1,19 @@
-<?php
-$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tablesort-uncompressed.js';
-?>
-
 
 <div id="tl_member_cell_edit">
     <div id="tl_member_cell_edit_main">
         <h2>Mitgliederverwaltung</h2>
 
-        <input id="chboxCol_0" type="checkbox" value="col_0" onchange="javascript:toggleCols(this)" checked>
+        <input id="chboxCol_0" type="checkbox" value="col_0" onchange="javascript:objSortableTable.toggleCols(this)" checked>
         <label for="chboxCol_0">Username</label>
-        <input id="chboxCol_1" type="checkbox" value="col_1" onchange="javascript:toggleCols(this)" checked>
+        <input id="chboxCol_1" type="checkbox" value="col_1" onchange="javascript:objSortableTable.toggleCols(this)" checked>
         <label for="chboxCol_1">Firstname</label>
-        <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:toggleCols(this)" checked>
+        <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:objSortableTable.toggleCols(this)" checked>
         <label for="chboxCol_2">Lastname</label>
         <!-- groups -->
         <br>
         <?php $i=3; ?>
         <?php foreach($this->groups as $group): ?>
-        <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:toggleCols(this)" checked>
+        <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:objSortableTable.toggleCols(this)" checked>
         <label for="chboxCol_<?php echo $i; ?>"><?php echo $group['name']; ?></label>
         <?php $i++; ?>
         <?php endforeach; ?>
@@ -65,7 +61,7 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
                         <?php endforeach; ?>
 
                         <th class="filterCell unsortable">
-                            <input type="submit" value="filter" onclick="javascript:filter();">
+                            <input type="submit" value="filter" onclick="javascript:objSortableTable.filter();">
                         </th>
                         <th class="editCell unsortable">
                         </th>
@@ -78,9 +74,7 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
                     </tbody>
                 </table>
 
-                <table id="tempTable">
 
-                </table>
             </div>
         </div>
     </div>
@@ -88,176 +82,47 @@ $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tabl
 <script>
 
     window.addEvent('domready', function () {
-        mainTable = document.id('mainTable');
-        tempTable = document.id('tempTable');
 
-        filterRow = document.id('filterRow');
+        // initialize TlMemberCellEdit object
         objXHR = new TlMemberCellEdit();
         objXHR.requestToken = '<?php echo REQUEST_TOKEN; ?>';
         objXHR.formSubmit = 'tl_member';
         objXHR.ref = '<?php echo \Input::get("ref"); ?>';
-        objSortableTable = new MyTableSort(mainTable, '.', ',');
-        resortTable();
 
+        // initialize MyTableSort object
+        var mainTable = document.id('mainTable');
+        objSortableTable = new MyTableSort(mainTable, '.', ',', 1);
+        objSortableTable.resortTable();
+
+        // restore settings from Cookies
         for (i = 0; i < 100; i++) {
             if (document.id('chboxCol_' + i)) {
                 var elChBox = document.id('chboxCol_' + i);
 
-                if (getCookieValue('col_' + i) == 'visible') {
+                if (objSortableTable.getCookieValue('col_' + i) == 'visible') {
                     elChBox.checked = true;
                 } else {
                     elChBox.checked = false;
                 }
-                toggleCols(elChBox);
+                objSortableTable.toggleCols(elChBox);
             }
         }
-
-
     });
 
 
-    /**
-     * get cookie from browser
-     * @param key
-     * @return string
-     */
-    function getCookieValue(key) {
-        if (key == '') return;
-        cookieStr = Cookie.read('cellEdit');
-        if (cookieStr === null) return null;
-        objCookie = JSON.decode(cookieStr);
-        if (objCookie[key]) {
-            return objCookie[key];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Send cookie to browser
-     * @param key
-     * @param value
-     */
-    function setCookieValue(key, value) {
-        if (key == '') return;
-        cookieStr = Cookie.read('cellEdit');
-        if (cookieStr) {
-            var objCookie = JSON.decode(cookieStr);
-        } else {
-            var objCookie = {};
-        }
-        objCookie[key] = value;
-
-        cookieStr = JSON.encode(objCookie);
-        Cookie.write('cellEdit', cookieStr, {duration: 30});
-
-    }
-
-    function filter() {
-
-        restoreTable();
-        $$('#' + filterRow.id + ' .filterInput').each(function (elInput) {
-            if (elInput.type == 'text') {
-                var search = elInput.value.toLowerCase();
-                if (search != '') {
-                    var col = elInput.getProperty('data-config');
-                    $$('td.col_' + col + ' span').each(function (elSpan) {
-
-                        var content = elSpan.innerHTML.toLowerCase();
-                        if (!content.test(search)) {
-                            elRow = elSpan.getParent('tr');
-                            elRow.addClass('hiddenRow');
-                        }
-
-                    });
-                }
-            }
 
 
-            if (elInput.tagName == 'SELECT') {
 
 
-                var value = elInput.options[elInput.selectedIndex].value;
-
-                var col = elInput.getProperty('data-config');
-                $$('td.col_' + col + ' input[type=checkbox]').each(function (elChbx) {
-                    if (value == 'true') {
-                        if (elChbx.checked == false) {
-                            elRow = elChbx.getParent('tr');
-                            elRow.addClass('hiddenRow');
-                        }
-                    }
-                    if (value == 'false') {
-                        if (elChbx.checked == true) {
-                            elRow = elChbx.getParent('tr');
-                            elRow.addClass('hiddenRow');
-                        }
-                    }
-                });
-            }
 
 
-        });
 
 
-        $$('tr.hiddenRow').each(function (elRow) {
-            elRow.removeClass('hiddenRow');
-            tempTable.adopt(elRow);
-        });
 
-        resortTable();
 
-    }
 
-    function restoreTable() {
-        var mainTableBody = $$('#mainTable tbody')[0];
-        tempTable.getChildren('tr').each(function (elRow) {
-            mainTableBody.adopt(elRow);
-        });
-    }
 
-    function resortTable() {
 
-        if ($$('th.asc')[0]) {
-            var sortCell = $$('th.asc')[0];
-            sortCell.removeClass('asc');
-            sortCell.addClass('desc');
-        }
-        else if ($$('th.desc')[0]) {
-            var sortCell = $$('th.desc')[0];
-            sortCell.removeClass('desc');
-            sortCell.addClass('asc');
-        }
-        else {
-            //
-        }
-
-        if (sortCell) {
-            col = sortCell.id.replace("th_", "");
-        } else {
-            // if no cookie was set, add default settings
-            var sortCell = document.id('th_0');
-            var col = '0';
-        }
-
-        objSortableTable.resort(col, sortCell);
-
-    }
-
-    function toggleCols(elChBox) {
-        var col = elChBox.value;
-        if (elChBox.checked) {
-            $$('.' + col).each(function (elCell) {
-                elCell.setStyle('display', 'table-cell');
-            });
-            setCookieValue(col, 'visible');
-        } else {
-            $$('.' + col).each(function (elCell) {
-                elCell.setStyle('display', 'none');
-            });
-            setCookieValue(col, 'invisible');
-        }
-    }
 
 
 </script>

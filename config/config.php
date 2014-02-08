@@ -20,4 +20,5 @@ if ($_GET['do'] == 'tl_member_cell_edit')
 {
        $GLOBALS['TL_CSS'][] = 'system/modules/tl_member_cell_edit/assets/css/tl_member_cell_edit.css';
        $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tl_member_cell_edit.js';
+       $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/tl_member_cell_edit/assets/js/tablesort-tablefilter.js';
 }
