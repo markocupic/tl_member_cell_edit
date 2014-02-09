@@ -98,7 +98,7 @@
                         <?php endforeach; ?>
 
                         <th class="filterCell unsortable">
-                            <input type="submit" value="filter" onclick="javascript:objSortableTable.filter();">
+                            <!--<input type="submit" value="filter" onclick="javascript:objSortableTable.filter();">-->
                         </th>
                         <th class="editCell unsortable">
                         </th>

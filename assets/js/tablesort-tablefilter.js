@@ -97,6 +97,7 @@ var MyTableSort = new Class(
             }
 
             // Cupic
+            var self = this;
             // inject temp table for filtering
             this.tempTable = new Element('table', {
                 id: 'tempTable',
@@ -107,10 +108,16 @@ var MyTableSort = new Class(
             this.tempTable.inject(table, 'after');
 
             // initialize filterRow
+            // add onchange event
             if (!table.tHead.rows[intFilterRow]) {
                 alert('Please add a valid FilterRow');
             } else {
                 this.filterRow = table.tHead.rows[intFilterRow];
+                $$('.filterInput').each(function(elInput){
+                    elInput.addEvent('change', function(event){
+                        self.filter();
+                    });
+                });
             }
 
             // set the table object var
