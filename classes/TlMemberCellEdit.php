@@ -37,26 +37,28 @@ class TlMemberCellEdit extends BackendModule
                      exit();
               }
 
+              $arrCheckboxFields = array(
+                     'groups' => 'tl_member_group',
+                     'customers' => 'tl_customer_group',
+                     'newsletter' => 'tl_newsletter_channel'
+              );
 
-              $arrAvailableGroups = array();
-              $objGroups = \Database::getInstance()->execute("SELECT * FROM tl_member_group");
-              while ($objGroups->next())
+              foreach ($arrCheckboxFields as $field => $strTable)
               {
-                     $arrAvailableGroups[$objGroups->id] = array(
-                            'id' => $objGroups->id,
-                            'name' => $objGroups->name
-                     );
+                     $arrAvailable = array();
+                     $objDb = \Database::getInstance()->execute('SELECT * FROM ' . $strTable);
+                     while ($objDb->next())
+                     {
+                            $arrAvailable[$objDb->id] = array(
+                                   'id' => $objDb->id,
+                                   'name' => $objDb->name,
+                                   'title' => $objDb->title
+                            );
+                     }
+                     $varName = 'arrAvailable' . ucfirst($field);
+                     $$varName = $arrAvailable;
               }
 
-              $arrAvailableCustomers = array();
-              $objCustomers = \Database::getInstance()->execute("SELECT * FROM tl_customer_group");
-              while ($objCustomers->next())
-              {
-                     $arrAvailableCustomers[$objCustomers->id] = array(
-                            'id' => $objCustomers->id,
-                            'name' => $objCustomers->name
-                     );
-              }
 
               $objDb = \Database::getInstance()->execute("SELECT * FROM tl_member WHERE city='Entenhausen' ORDER BY username");
 
@@ -72,45 +74,36 @@ class TlMemberCellEdit extends BackendModule
                      $objTemplate->firstname = $objDb->firstname;
                      $objTemplate->lastname = $objDb->lastname;
 
-                     //member_groups
-                     $arrGroups = strlen($objDb->groups != '') ? unserialize($objDb->groups) : array();
-                     $arrGroupMembership = $arrAvailableGroups;
-                     foreach ($arrGroupMembership as $k => $v)
+                     // groups, newsletter, customer
+                     foreach ($arrCheckboxFields as $field => $strTable)
                      {
-                            if (in_array($v['id'], $arrGroups))
+                            //member_groups
+                            $arrGroups = strlen($objDb->$field != '') ? unserialize($objDb->$field) : array();
+                            $dynVarName = 'arrAvailable' . ucfirst($field);
+                            $arrGroupMembership = $$dynVarName;
+                            foreach ($arrGroupMembership as $k => $v)
                             {
-                                   $arrGroupMembership[$k]['checked'] = ' checked';
+                                   if (in_array($v['id'], $arrGroups))
+                                   {
+                                          $arrGroupMembership[$k]['checked'] = ' checked';
+                                   }
+                                   else
+                                   {
+                                          $arrGroupMembership[$k]['checked'] = '';
+                                   }
                             }
-                            else
-                            {
-                                   $arrGroupMembership[$k]['checked'] = '';
-                            }
+                            $objTemplate->$field = $arrGroupMembership;
                      }
-                     $objTemplate->groups = $arrGroupMembership;
-
-                     //customer_groups
-                     $arrCustomers = strlen($objDb->customers != '') ? unserialize($objDb->customers) : array();
-                     $arrCustomerMembership = $arrAvailableCustomers;
-                     foreach ($arrCustomerMembership as $k => $v)
-                     {
-                            if (in_array($v['id'], $arrCustomers))
-                            {
-                                   $arrCustomerMembership[$k]['checked'] = ' checked';
-                            }
-                            else
-                            {
-                                   $arrCustomerMembership[$k]['checked'] = '';
-                            }
-                     }
-                     $objTemplate->customers = $arrCustomerMembership;
+                     // parse partial template
                      $html .= $objTemplate->parse();
-
               }
 
 
               $this->Template = new BackendTemplate($this->strTemplate);
               $this->Template->groups = $arrAvailableGroups;
               $this->Template->customers = $arrAvailableCustomers;
+              $this->Template->newsletter = $arrAvailableNewsletter;
+
               $this->Template->rows = $html;
        }
 

@@ -31,6 +31,15 @@
                 <?php $i++; ?>
                 <?php endforeach; ?>
             </div>
+            <!-- newsletters -->
+            <div style="clear:both; float:left; width:150px;"><h3>Newsletters:</h3></div>
+            <div style="float:left;">
+                <?php foreach($this->newsletter as $newsletter): ?>
+                <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                <label for="chboxCol_<?php echo $i; ?>"><?php echo $newsletter['title']; ?></label>
+                <?php $i++; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
 
 
@@ -56,6 +65,11 @@
 
                         <?php foreach($this->customers as $customer): ?>
                         <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $customer['name']; ?></th>
+                        <?php $i++; ?>
+                        <?php endforeach; ?>
+
+                        <?php foreach($this->newsletter as $newsletter): ?>
+                        <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $newsletter['title']; ?></th>
                         <?php $i++; ?>
                         <?php endforeach; ?>
 
@@ -89,6 +103,18 @@
                         <?php foreach($this->customers as $customer): ?>
                         <th class="filterCell col_<?php echo $i; ?>">
                             <select id="filter_customer_<?php echo $customer['id']; ?>" size="1" data-config="<?php echo $i; ?>" class="filterInput" type="select">
+                                <option value="0">-----</option>
+                                <option value="true">true</option>
+                                <option value="false">false</option>
+                            </select>
+                        </th>
+                        <?php $i++; ?>
+                        <?php endforeach; ?>
+
+                        <!-- newsletter -->
+                        <?php foreach($this->newsletter as $newsletter): ?>
+                        <th class="filterCell col_<?php echo $i; ?>">
+                            <select id="filter_newsletter_<?php echo $newsletter['id']; ?>" size="1" data-config="<?php echo $i; ?>" class="filterInput" type="select">
                                 <option value="0">-----</option>
                                 <option value="true">true</option>
                                 <option value="false">false</option>

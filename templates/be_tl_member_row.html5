@@ -29,6 +29,14 @@
     <?php $i++; ?>
     <?php endforeach; ?>
 
+    <?php foreach ($this->newsletter as $arrNewsletter): ?>
+    <td class="checkable col_<?php echo $i; ?>">
+        <span style="display:none"><?php echo trim($arrNewsletter['checked']); ?></span>
+        <input type="checkbox" name="data[<?php echo $this->id; ?>][newsletter_<?php echo $arrNewsletter['id']; ?>]"<?php echo $arrNewsletter['checked']; ?>>
+    </td>
+    <?php $i++; ?>
+    <?php endforeach; ?>
+
 
     <td class="button delete">
         <img src="system/themes/default/images/delete.gif" width="14" height="16" alt="Mitglied löschen" onclick="objXHR.delete(this, '<?php echo $this->id; ?>')">

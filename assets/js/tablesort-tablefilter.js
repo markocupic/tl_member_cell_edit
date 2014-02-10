@@ -98,30 +98,26 @@ var MyTableSort = new Class(
 
             // Cupic
             var self = this;
-            // inject temp table for filtering
-            this.tempTable = new Element('table', {
-                id: 'tempTable',
-                styles: {
-                    display: 'none'
-                }
-            });
-            this.tempTable.inject(table, 'after');
+
+            // set the table object var
+            this.table = table;
+
+            // create a virtual table for filtered rows
+            this.tempTable = new Element('table');
 
             // initialize filterRow
             // add onchange event
             if (!table.tHead.rows[intFilterRow]) {
                 alert('Please add a valid FilterRow');
             } else {
+                // add onchange event to each input element in filter row
                 this.filterRow = table.tHead.rows[intFilterRow];
-                $$('.filterInput').each(function(elInput){
-                    elInput.addEvent('change', function(event){
+                $$('.filterInput').each(function (elInput) {
+                    elInput.addEvent('change', function (event) {
                         self.filter();
                     });
                 });
             }
-
-            // set the table object var
-            this.table = table;
         },
 
         /**
@@ -129,8 +125,11 @@ var MyTableSort = new Class(
          * @author Cupic
          */
         filter: function () {
+            var self = this;
 
+            // first restore the table
             this.restoreTable();
+
             $$('#' + this.filterRow.id + ' .filterInput').each(function (elInput) {
                 if (elInput.type == 'text') {
                     var search = elInput.value.toLowerCase();
@@ -173,7 +172,7 @@ var MyTableSort = new Class(
 
             $$('tr.hiddenRow').each(function (elRow) {
                 elRow.removeClass('hiddenRow');
-                tempTable.adopt(elRow);
+                self.tempTable.adopt(elRow);
             });
 
             this.resortTable();
