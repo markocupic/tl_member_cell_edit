@@ -2,46 +2,58 @@
     <div id="tl_member_cell_edit_main">
         <h2>Mitgliederverwaltung</h2>
 
-        <div id="toggleSelectContainer">
-            <div style="clear:both; float:left; width:150px;"><h3>Felder</h3></div>
-            <div style="float:left;">
-                <input id="chboxCol_0" type="checkbox" value="col_0" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-                <label for="chboxCol_0"><?php echo $GLOBALS['TL_LANG']['tl_member']['username'][0]; ?></label>
-                <input id="chboxCol_1" type="checkbox" value="col_1" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-                <label for="chboxCol_1"><?php echo $GLOBALS['TL_LANG']['tl_member']['firstname'][0]; ?></label>
-                <input id="chboxCol_2" type="checkbox" value="col_2" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-                <label for="chboxCol_2"><?php echo $GLOBALS['TL_LANG']['tl_member']['lastname'][0]; ?></label>
-            </div>
-            <!-- groups -->
-            <div style="clear:both; float:left; width:150px;"><h3>Mitgliedergruppen:</h3></div>
-            <div style="float:left;">
-                <?php $i=3; ?>
-                <?php foreach($this->groups as $group): ?>
-                <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-                <label for="chboxCol_<?php echo $i; ?>"><?php echo $group['name']; ?></label>
-                <?php $i++; ?>
-                <?php endforeach; ?>
-            </div>
-            <!-- customers -->
-            <div style="clear:both; float:left; width:150px;"><h3>Customergruppen:</h3></div>
-            <div style="float:left;">
-                <?php foreach($this->customers as $customer): ?>
-                <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-                <label for="chboxCol_<?php echo $i; ?>"><?php echo $customer['name']; ?></label>
-                <?php $i++; ?>
-                <?php endforeach; ?>
-            </div>
-            <!-- newsletters -->
-            <div style="clear:both; float:left; width:150px;"><h3>Newsletters:</h3></div>
-            <div style="float:left;">
-                <?php foreach($this->newsletter as $newsletter): ?>
-                <input id="chboxCol_<?php echo $i; ?>" type="checkbox" value="col_<?php echo $i; ?>" onchange="javascript:objSortableTable.toggleCols(this)" checked>
-                <label for="chboxCol_<?php echo $i; ?>"><?php echo $newsletter['title']; ?></label>
-                <?php $i++; ?>
-                <?php endforeach; ?>
+        <div id="accordion">
+            <h3 class="toggle_title">Spalten ein-/ausblenden</h3>
+
+            <div id="toggleSelectContainer" class="content">
+                <div style="clear:both; float:left; width:150px;"><h3>Felder</h3></div>
+                <div style="float:left;">
+                    <input id="chboxCol_0" type="checkbox" value="col_0"
+                           onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                    <label for="chboxCol_0"><?php echo $GLOBALS['TL_LANG']['tl_member']['username'][0]; ?></label>
+                    <input id="chboxCol_1" type="checkbox" value="col_1"
+                           onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                    <label for="chboxCol_1"><?php echo $GLOBALS['TL_LANG']['tl_member']['firstname'][0]; ?></label>
+                    <input id="chboxCol_2" type="checkbox" value="col_2"
+                           onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                    <label for="chboxCol_2"><?php echo $GLOBALS['TL_LANG']['tl_member']['lastname'][0]; ?></label>
+                </div>
+                <!-- groups -->
+                <div style="clear:both; float:left; width:150px;"><h3>Mitgliedergruppen:</h3></div>
+                <div style="float:left;">
+                    <?php $i = 3; ?>
+                    <?php foreach ($this->groups as $group): ?>
+                    <input id="chboxCol_<?php echo $i; ?>" type="checkbox"
+                           value="col_<?php echo $i; ?>"
+                           onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                    <label for="chboxCol_<?php echo $i; ?>"><?php echo $group['name']; ?></label>
+                    <?php $i++; ?>
+                    <?php endforeach; ?>
+                </div>
+                <!-- customers -->
+                <div style="clear:both; float:left; width:150px;"><h3>Customergruppen:</h3></div>
+                <div style="float:left;">
+                    <?php foreach ($this->customers as $customer): ?>
+                    <input id="chboxCol_<?php echo $i; ?>" type="checkbox"
+                           value="col_<?php echo $i; ?>"
+                           onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                    <label for="chboxCol_<?php echo $i; ?>"><?php echo $customer['name']; ?></label>
+                    <?php $i++; ?>
+                    <?php endforeach; ?>
+                </div>
+                <!-- newsletters -->
+                <div style="clear:both; float:left; width:150px;"><h3>Newsletters:</h3></div>
+                <div style="float:left;">
+                    <?php foreach ($this->newsletter as $newsletter): ?>
+                    <input id="chboxCol_<?php echo $i; ?>" type="checkbox"
+                           value="col_<?php echo $i; ?>"
+                           onchange="javascript:objSortableTable.toggleCols(this)" checked>
+                    <label for="chboxCol_<?php echo $i; ?>"><?php echo $newsletter['title']; ?></label>
+                    <?php $i++; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
-
 
         <!-- Server messages -->
         <div id="statusBox" style="clear:both;"></div>
@@ -53,23 +65,29 @@
                     <!-- head section -->
                     <thead>
                     <tr id="headlineRow">
-                        <th id="th_0" class="col_0"><?php echo $GLOBALS['TL_LANG']['tl_member']['username'][0]; ?></th>
-                        <th id="th_1" class="col_1"><?php echo $GLOBALS['TL_LANG']['tl_member']['firstname'][0]; ?></th>
-                        <th id="th_2" class="col_2"><?php echo $GLOBALS['TL_LANG']['tl_member']['lastname'][0]; ?></th>
+                        <th id="th_0"
+                            class="col_0"><?php echo $GLOBALS['TL_LANG']['tl_member']['username'][0]; ?></th>
+                        <th id="th_1"
+                            class="col_1"><?php echo $GLOBALS['TL_LANG']['tl_member']['firstname'][0]; ?></th>
+                        <th id="th_2"
+                            class="col_2"><?php echo $GLOBALS['TL_LANG']['tl_member']['lastname'][0]; ?></th>
 
-                        <?php $i=3; ?>
-                        <?php foreach($this->groups as $group): ?>
-                        <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $group['name']; ?></th>
+                        <?php $i = 3; ?>
+                        <?php foreach ($this->groups as $group): ?>
+                        <th id="th_<?php echo $i; ?>"
+                            class="col_<?php echo $i; ?>"><?php echo $group['name']; ?></th>
                         <?php $i++; ?>
                         <?php endforeach; ?>
 
-                        <?php foreach($this->customers as $customer): ?>
-                        <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $customer['name']; ?></th>
+                        <?php foreach ($this->customers as $customer): ?>
+                        <th id="th_<?php echo $i; ?>"
+                            class="col_<?php echo $i; ?>"><?php echo $customer['name']; ?></th>
                         <?php $i++; ?>
                         <?php endforeach; ?>
 
-                        <?php foreach($this->newsletter as $newsletter): ?>
-                        <th id="th_<?php echo $i; ?>" class="col_<?php echo $i; ?>"><?php echo $newsletter['title']; ?></th>
+                        <?php foreach ($this->newsletter as $newsletter): ?>
+                        <th id="th_<?php echo $i; ?>"
+                            class="col_<?php echo $i; ?>"><?php echo $newsletter['title']; ?></th>
                         <?php $i++; ?>
                         <?php endforeach; ?>
 
@@ -80,17 +98,22 @@
 
                     <tr id="filterRow">
                         <th class="filterCell col_0">
-                            <input id="filter_username" data-config="0" class="filterInput" value=""></th>
+                            <input id="filter_username" data-config="0" class="filterInput"
+                                   value=""></th>
                         <th class="filterCell col_1">
-                            <input id="filter_firstname" data-config="1" class="filterInput" type="text" value=""></th>
+                            <input id="filter_firstname" data-config="1" class="filterInput"
+                                   type="text" value=""></th>
                         <th class="filterCell col_2">
-                            <input id="filter_lastname" data-config="2" class="filterInput" type="text" value=""></th>
+                            <input id="filter_lastname" data-config="2" class="filterInput"
+                                   type="text" value=""></th>
 
                         <!-- member_groups -->
-                        <?php $i=3; ?>
-                        <?php foreach($this->groups as $group): ?>
+                        <?php $i = 3; ?>
+                        <?php foreach ($this->groups as $group): ?>
                         <th class="filterCell col_<?php echo $i; ?>">
-                            <select id="filter_group_<?php echo $group['id']; ?>" size="1" data-config="<?php echo $i; ?>" class="filterInput" type="select">
+                            <select id="filter_group_<?php echo $group['id']; ?>" size="1"
+                                    data-config="<?php echo $i; ?>" class="filterInput"
+                                    type="select">
                                 <option value="0">-----</option>
                                 <option value="true">true</option>
                                 <option value="false">false</option>
@@ -100,9 +123,11 @@
                         <?php endforeach; ?>
 
                         <!-- customer groups -->
-                        <?php foreach($this->customers as $customer): ?>
+                        <?php foreach ($this->customers as $customer): ?>
                         <th class="filterCell col_<?php echo $i; ?>">
-                            <select id="filter_customer_<?php echo $customer['id']; ?>" size="1" data-config="<?php echo $i; ?>" class="filterInput" type="select">
+                            <select id="filter_customer_<?php echo $customer['id']; ?>"
+                                    size="1" data-config="<?php echo $i; ?>"
+                                    class="filterInput" type="select">
                                 <option value="0">-----</option>
                                 <option value="true">true</option>
                                 <option value="false">false</option>
@@ -112,9 +137,11 @@
                         <?php endforeach; ?>
 
                         <!-- newsletter -->
-                        <?php foreach($this->newsletter as $newsletter): ?>
+                        <?php foreach ($this->newsletter as $newsletter): ?>
                         <th class="filterCell col_<?php echo $i; ?>">
-                            <select id="filter_newsletter_<?php echo $newsletter['id']; ?>" size="1" data-config="<?php echo $i; ?>" class="filterInput" type="select">
+                            <select id="filter_newsletter_<?php echo $newsletter['id']; ?>"
+                                    size="1" data-config="<?php echo $i; ?>"
+                                    class="filterInput" type="select">
                                 <option value="0">-----</option>
                                 <option value="true">true</option>
                                 <option value="false">false</option>
@@ -145,6 +172,10 @@
 <script>
 
     window.addEvent('domready', function () {
+        var myFx = new Fx.Slide(document.id('toggleSelectContainer'));
+        $$('#accordion h3.toggle_title').addEvent('click', function (event) {
+            myFx.toggle();
+        });
 
         // initialize TlMemberCellEdit object
         objXHR = new TlMemberCellEdit();

@@ -7,38 +7,45 @@
 #main {
     width: 985px !important;
 }
-.pointer
-{
-    cursor:pointer;
+.pointer {
+    cursor: pointer;
 }
-
-
 
 #tl_member_cell_edit_main {
     margin: 0 15px 15px 40px;
 }
-#toggleSelectContainer
-{
-    margin-top:20px;
+
+#toggleSelectContainer {
+    margin-top: 20px;
 }
-#toggleSelectContainer h3
-{
-    margin-top:0;
-    font-size:11px;
+
+#tl_member_cell_edit h2 {
+    font-size: 20px;
+    color: #A4AC64;
+}
+
+#tl_member_cell_edit h3.toggle_title {
+    color: #014cb6;
+    text-decoration: underline;
+}
+
+#toggleSelectContainer h3 {
+    margin-top: 0;
+    font-size: 11px;
     font-weight: bold;
+
 }
 #statusBox {
     margin: 20px 0 0 0;
-    padding-top:10px;
+    padding-top: 10px;
     height: 30px;
     color: rgb(119, 172, 69);
-    clear:both;
+    clear: both;
 }
 
 #windowFrame {
     overflow-x: scroll;
     width: 100%;
-    height: 400px;
 }
 
 #tableHolder {
@@ -54,6 +61,10 @@
 
 #mainTable .activeCell {
     border: 1px solid blue;
+}
+
+#mainTable .filterCell {
+    height: 25px !important;
 }
 
 #mainTable .odd td {

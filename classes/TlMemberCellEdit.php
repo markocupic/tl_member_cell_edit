@@ -49,7 +49,7 @@ class TlMemberCellEdit extends BackendModule
 
               $objDb = \Database::getInstance()->execute("SELECT * FROM tl_member WHERE city='Entenhausen' ORDER BY username");
 
-              //$objDb = \Database::getInstance()->execute("SELECT * FROM tl_member ORDER BY username");
+              $objDb = \Database::getInstance()->execute("SELECT * FROM tl_member ORDER BY username");
 
               $html = '';
               while ($objDb->next())

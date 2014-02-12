@@ -24,7 +24,6 @@ TlMemberCellEdit = new Class({
             });
         });
 
-
     },
 
     updateGroupmembership: function (elChbox) {
@@ -49,7 +48,6 @@ TlMemberCellEdit = new Class({
             elChbox.checked = false;
         }
 
-
         var req = new Request({
             method: 'post',
             url: 'contao/main.php?do=tl_member_cell_edit&act=updateGroupmembership',
@@ -62,9 +60,11 @@ TlMemberCellEdit = new Class({
                 'groupId': groupId,
                 'checked': checked
             },
+
             onRequest: function () {
                 //
             },
+
             onComplete: function (response) {
                 // hide message Text
                 document.id('statusBox').fade('hide');
@@ -119,7 +119,6 @@ TlMemberCellEdit = new Class({
         elInput.setStyle('display', 'inline');
         elInput.focus();
 
-
         // remove event click to active cell
         elActiveCell.removeEvents();
 
@@ -144,11 +143,7 @@ TlMemberCellEdit = new Class({
             }.delay(300));
 
             self.send(this);
-
-
         });
-
-
     },
 
     send: function (elInput) {
@@ -166,6 +161,7 @@ TlMemberCellEdit = new Class({
         var match = name.match(/^data(?:\[(.+?)\])?\[(.+?)\]$/);
         var id = match[1];
         var field = match[2];
+
         // post data
         var objPost = {
             'FORM_SUBMIT': self.formSubmit,
@@ -184,6 +180,7 @@ TlMemberCellEdit = new Class({
             onRequest: function () {
                 //
             },
+
             onComplete: function (response) {
                 // hide message Text
                 document.id('statusBox').fade('hide');
@@ -219,7 +216,6 @@ TlMemberCellEdit = new Class({
         var self = this;
         if (!confirm('Soll der Eintrag ID ' + id + ' wirklich gelöscht werden?'))return false;
 
-
         elCell = elImg.getParent('td');
 
         // create form data object
@@ -231,11 +227,8 @@ TlMemberCellEdit = new Class({
             onSuccess: function (responseJson) {
                 elImg.getParent('tr').destroy();
                 document.id('statusBox').innerHTML = 'Datensatz erfolgreich gelöscht';
-
             }
         });
         myRequest.send();
-
-
     }
 });
