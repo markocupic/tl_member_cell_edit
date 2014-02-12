@@ -1,6 +1,8 @@
 TlMemberCellEdit = new Class({
     initialize: function () {
+
         var self = this;
+        this.lastBlur = Date.now();
         $$('.editable').each(function (elCell) {
             elCell.addEvent('click', function (event) {
                 event.stopPropagation();
@@ -40,75 +42,52 @@ TlMemberCellEdit = new Class({
         } else {
             elChbox.checked = false;
         }
-        // create form data object
-        var form = new FormData();
-        form.append('FORM_SUBMIT', self.formSubmit);
-        form.append('REQUEST_TOKEN', self.requestToken);
-        form.append('field', field);
-        form.append('memberId', memberId);
-        form.append('groupId', groupId);
-        form.append('checked', checked);
-        form.action = 'contao/main.php?do=tl_member_cell_edit&action=updateGroupmembership';
 
-        // create request object
-        var xhr = new XMLHttpRequest();
 
-        // onprogress event
-        xhr.upload.addEventListener('progress', function (event) {
-            if (event.lengthComputable) {
-                var percentComplete = event.loaded / event.total * 100;
+        var req = new Request({
+            method: 'post',
+            url: 'contao/main.php?do=tl_member_cell_edit&act=updateGroupmembership',
+            data: {
+                'FORM_SUBMIT': self.formSubmit,
+                'REQUEST_TOKEN': self.requestToken,
+                'action': 'updateGroupmembership',
+                'field': field,
+                'memberId': memberId,
+                'groupId': groupId,
+                'checked': checked
+            },
+            onRequest: function () {
                 //
-            } else {
-                //
+            },
+            onComplete: function (response) {
+                // hide message Text
+                document.id('statusBox').fade('hide');
+                var serverResponse = '';
+                // catch  server-response
+                var json = JSON.decode(response);
+                // if server returns error
+                if (json.status == 'error') {
+                    serverResponse = json.errorMsg;
+                }
+
+                // if server returns success
+                if (json.status == 'success') {
+                    elSpan.innerHTML = json.value;
+                    serverResponse = 'Daten erfolgreich übernommen!';
+                }
+
+                var fadein = (function () {
+                    document.id('statusBox').innerHTML = serverResponse;
+                    document.id('statusBox').fade('in');
+                }.delay(200));
+
+                var fadeOut = (function () {
+                    document.id('statusBox').innerHTML = '';
+                    document.id('statusBox').fade('out')
+                }.delay(4000));
             }
-        }, false);
-
-        // onload event
-        xhr.addEventListener('load', function (event) {
-            // hide message Text
-            document.id('statusBox').fade('hide');
-            var serverResponse = '';
-            // get the server-response
-            var json = JSON.decode(xhr.responseText);
-            // if server returns error
-            if (json.status == 'error') {
-                serverResponse = json.errorMsg;
-            }
-
-            // if server returns success
-            if (json.status == 'success') {
-                elSpan.innerHTML = json.value;
-                serverResponse = 'Daten erfolgreich übernommen!';
-            }
-
-            var fadein = (function () {
-                document.id('statusBox').innerHTML = serverResponse;
-                document.id('statusBox').fade('in');
-            }.delay(200));
-
-            var fadeOut = (function () {
-                document.id('statusBox').innerHTML = '';
-                document.id('statusBox').fade('out')
-            }.delay(4000));
-
-        }, false);
-
-        // onerror event
-        xhr.addEventListener('error', function (event) {
-            //self.currentRequests--;
-            alert('Upload-error! Please check connectivity.');
-        }, false);
-
-        // onabort event
-        xhr.addEventListener('abort', function (event) {
-            //self.currentRequests--;
-        }, false);
-
-
-        // open and send xhr
-        xhr.open('POST', form.action, true);
-        // send request
-        xhr.send(form);
+        });
+        req.send();
     },
 
     showInputField: function (elSpan) {
@@ -139,14 +118,20 @@ TlMemberCellEdit = new Class({
         elActiveCell.removeEvents();
 
         elInput.addEvent('blur', function (event) {
-            elInput.removeEvent('blur');
-            event.stopPropagation();
+            // prevent firing more then one request at once
+            if (Date.now() - self.lastBlur < 1000){
+                return;
+            }
+            self.lastBlur = Date.now();
 
+            this.removeEvent('blur');
+            event.stopPropagation();
 
             var resetOnClickEvent = (function () {
                 elInput.getParent('td').addEvent('click', function (event) {
                     event.stopPropagation();
                     var elSpan = this.getChildren('span')[0];
+                    var elInput = this.getChildren('input')[0];
                     self.showInputField(elSpan);
                 });
 
@@ -175,77 +160,53 @@ TlMemberCellEdit = new Class({
         var match = name.match(/^data(?:\[(.+?)\])?\[(.+?)\]$/);
         var id = match[1];
         var field = match[2];
+        // post data
+        var objPost = {
+            'FORM_SUBMIT': self.formSubmit,
+            'REQUEST_TOKEN': self.requestToken,
+            'action': 'updateField',
+            'field': field,
+            'id': id,
+            'value': elInput.value
+        }
+        objPost[field] = elInput.value;
 
-        // create form data object
-        var form = new FormData();
-        form.append('FORM_SUBMIT', self.formSubmit);
-        form.append('REQUEST_TOKEN', self.requestToken);
-        form.append('field', field);
-        form.append(field, elInput.value);
-        form.append('id', id);
-        form.append('value', elInput.value);
-        form.action = 'contao/main.php?do=tl_member_cell_edit&action=update';
-
-        // create request object
-        var xhr = new XMLHttpRequest();
-
-        // onprogress event
-        xhr.upload.addEventListener('progress', function (event) {
-            if (event.lengthComputable) {
-                var percentComplete = event.loaded / event.total * 100;
+        var req = new Request({
+            method: 'post',
+            url: 'contao/main.php?do=tl_member_cell_edit&act=updateField',
+            data: objPost,
+            onRequest: function () {
                 //
-            } else {
-                //
+            },
+            onComplete: function (response) {
+                // hide message Text
+                document.id('statusBox').fade('hide');
+                var serverResponse = '';
+                // get the server-response
+                var json = JSON.decode(response);
+                // if server returns error
+                if (json.status == 'error') {
+                    serverResponse = json.errorMsg;
+                }
+
+                // if server returns success
+                if (json.status == 'success') {
+                    elSpan.innerHTML = json.value;
+                    serverResponse = 'Daten erfolgreich übernommen!';
+                }
+
+                var fadein = (function () {
+                    document.id('statusBox').innerHTML = serverResponse;
+                    document.id('statusBox').fade('in');
+                }.delay(200));
+
+                var fadeOut = (function () {
+                    document.id('statusBox').innerHTML = '';
+                    document.id('statusBox').fade('out')
+                }.delay(4000));
             }
-        }, false);
-
-        // onload event
-        xhr.addEventListener('load', function (event) {
-            // hide message Text
-            document.id('statusBox').fade('hide');
-            var serverResponse = '';
-            // get the server-response
-            var json = JSON.decode(xhr.responseText);
-            // if server returns error
-            if (json.status == 'error') {
-                serverResponse = json.errorMsg;
-            }
-
-            // if server returns success
-            if (json.status == 'success') {
-                elSpan.innerHTML = json.value;
-                serverResponse = 'Daten erfolgreich übernommen!';
-            }
-
-            var fadein = (function () {
-                document.id('statusBox').innerHTML = serverResponse;
-                document.id('statusBox').fade('in');
-            }.delay(200));
-
-            var fadeOut = (function () {
-                document.id('statusBox').innerHTML = '';
-                document.id('statusBox').fade('out')
-            }.delay(4000));
-
-        }, false);
-
-        // onerror event
-        xhr.addEventListener('error', function (event) {
-            //self.currentRequests--;
-            alert('Upload-error! Please check connectivity.');
-        }, false);
-
-        // onabort event
-        xhr.addEventListener('abort', function (event) {
-            //self.currentRequests--;
-        }, false);
-
-
-        // open and send xhr
-        xhr.open('POST', form.action, true);
-        // send request
-        xhr.send(form);
-
+        });
+        req.send();
     },
 
     delete: function (elImg, id) {

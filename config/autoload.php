@@ -16,7 +16,9 @@
  */
 ClassLoader::addClasses(array
 (
-	'TlMemberCellEdit' => 'system/modules/tl_member_cell_edit/classes/TlMemberCellEdit.php',
+	// Classes
+	'TlMemberCellEdit'     => 'system/modules/tl_member_cell_edit/classes/TlMemberCellEdit.php',
+	'TlMemberCellEditAjax' => 'system/modules/tl_member_cell_edit/classes/TlMemberCellEditAjax.php',
 ));
 
 

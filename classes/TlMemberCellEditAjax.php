@@ -9,96 +9,28 @@
  * @author  Marko Cupic <m.cupic@gmx.ch>
  * @license LGPL
  */
-class TlMemberCellEdit extends BackendModule
+class TlMemberCellEditAjax extends Backend
 {
 
-       //str Template
-       protected $strTemplate = 'be_tl_member_main';
-
-
-       /**
-        * compile
-        */
-       public function compile()
+       public function executePreActions($strAction)
        {
-              // load language file
-              \System::loadLanguageFile('tl_member');
 
-              $arrMembership = array(
-                     'groups' => 'tl_member_group',
-                     'customers' => 'tl_customer_group',
-                     'newsletter' => 'tl_newsletter_channel'
-              );
-
-              foreach ($arrMembership as $field => $strTable)
+              $this->import('Database');
+              // catch ajax requests
+              $callback = $strAction;
+              if (method_exists($this, $callback))
               {
-                     $arrAvailable = array();
-                     $objDb = \Database::getInstance()->execute('SELECT * FROM ' . $strTable);
-                     while ($objDb->next())
-                     {
-                            $arrAvailable[$objDb->id] = array(
-                                   'id' => $objDb->id,
-                                   'name' => $objDb->name,
-                                   'title' => $objDb->title
-                            );
-                     }
-                     $varName = 'arrAvailable' . ucfirst($field);
-                     $$varName = $arrAvailable;
+                     $this->$callback();
+
               }
-
-
-              $objDb = \Database::getInstance()->execute("SELECT * FROM tl_member WHERE city='Entenhausen' ORDER BY username");
-
-              //$objDb = \Database::getInstance()->execute("SELECT * FROM tl_member ORDER BY username");
-
-              $html = '';
-              while ($objDb->next())
-              {
-                     $objTemplate = new \BackendTemplate('be_tl_member_row');
-                     $objTemplate->id = $objDb->id;
-                     $objTemplate->username = $objDb->username;
-                     $objTemplate->lastname = $objDb->lastname;
-                     $objTemplate->firstname = $objDb->firstname;
-                     $objTemplate->lastname = $objDb->lastname;
-
-                     // groups, newsletter, customer
-                     foreach ($arrMembership as $field => $strTable)
-                     {
-                            //member_groups
-                            $arrGroups = strlen($objDb->$field != '') ? unserialize($objDb->$field) : array();
-                            $dynVarName = 'arrAvailable' . ucfirst($field);
-                            $arrGroupMembership = $$dynVarName;
-                            foreach ($arrGroupMembership as $k => $v)
-                            {
-                                   if (in_array($v['id'], $arrGroups))
-                                   {
-                                          $arrGroupMembership[$k]['checked'] = ' checked';
-                                   }
-                                   else
-                                   {
-                                          $arrGroupMembership[$k]['checked'] = '';
-                                   }
-                            }
-                            $objTemplate->$field = $arrGroupMembership;
-                     }
-                     // parse partial template
-                     $html .= $objTemplate->parse();
-              }
-
-
-              $this->Template = new BackendTemplate($this->strTemplate);
-              $this->Template->groups = $arrAvailableGroups;
-              $this->Template->customers = $arrAvailableCustomers;
-              $this->Template->newsletter = $arrAvailableNewsletter;
-
-              $this->Template->rows = $html;
+              exit();
        }
 
 
        /**
         * update data record
         */
-       private function update()
+       public function updateField()
        {
 
               $json = array();
@@ -111,11 +43,13 @@ class TlMemberCellEdit extends BackendModule
               $set = array();
 
 
+
               // load language file
               \System::loadLanguageFile($strTable);
 
               // load dca
               $this->loadDataContainer($strTable);
+
 
               // get the DCA of the current field
               $arrDCA =  & $GLOBALS['TL_DCA'][$strTable]['fields'][$field];
@@ -130,6 +64,7 @@ class TlMemberCellEdit extends BackendModule
               }
               $strClass = & $GLOBALS['TL_FFL'][$inputType];
 
+
               // Continue if the class does not exist
               // Use form widgets for input validation
               if (class_exists($strClass))
@@ -142,7 +77,6 @@ class TlMemberCellEdit extends BackendModule
                      {
                             \Input::setPost('password_confirm', $value);
                      }
-
 
                      // validate input
                      $objWidget->validate();
@@ -164,6 +98,7 @@ class TlMemberCellEdit extends BackendModule
                                    $objWidget->addError(sprintf($GLOBALS['TL_LANG']['ERR']['invalidDate'], $value));
                             }
                      }
+
 
                      // Make sure that unique fields are unique
                      if ($arrDCA['eval']['unique'] && $value != '' && !$this->Database->isUniqueValue($strTable, $field, $value, null))
@@ -199,6 +134,7 @@ class TlMemberCellEdit extends BackendModule
               {
                      $set[$field] = $value;
                      $query = 'UPDATE ' . $strTable . ' %s WHERE id=?';
+
                      $this->Database->prepare($query)->set($set)->execute($intId);
                      $this->log('A new version of record "' . $strTable . '.id=' . $intId . '" has been created', __METHOD__, TL_GENERAL);
               }
@@ -213,7 +149,7 @@ class TlMemberCellEdit extends BackendModule
        /**
         * update data record
         */
-       private function updateGroupmembership()
+       public function updateGroupmembership()
        {
 
               $json = array();
@@ -223,7 +159,6 @@ class TlMemberCellEdit extends BackendModule
               $groupId = \Input::post('groupId');
               $checked = \Input::post('checked');
               $field = \Input::post('field');
-
 
               $objMember = $this->Database->prepare('SELECT * FROM ' . $strTable . ' WHERE id=?')->execute($intId);
               if ($objMember->numRows)
