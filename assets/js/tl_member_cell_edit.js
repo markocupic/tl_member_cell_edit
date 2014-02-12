@@ -1,8 +1,14 @@
 TlMemberCellEdit = new Class({
+
+    /**
+     * timestamp of last request
+     */
+    lastRequest: 0,
+
     initialize: function () {
 
         var self = this;
-        this.lastBlur = Date.now();
+        this.lastRequest = Date.now();
         $$('.editable').each(function (elCell) {
             elCell.addEvent('click', function (event) {
                 event.stopPropagation();
@@ -119,10 +125,10 @@ TlMemberCellEdit = new Class({
 
         elInput.addEvent('blur', function (event) {
             // prevent firing more then one request at once
-            if (Date.now() - self.lastBlur < 1000){
+            if (Date.now() - self.lastRequest < 1000) {
                 return;
             }
-            self.lastBlur = Date.now();
+            self.lastRequest = Date.now();
 
             this.removeEvent('blur');
             event.stopPropagation();
